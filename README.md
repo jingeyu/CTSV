@@ -1,6 +1,6 @@
-## CTSV:Identification of Cell-Type-specific Spatially Variable Genes accounting for excess zeros.
+## CTSV: Identification of cell-type-specific spatially variable genes accounting for excess zeros
 
-The R package CTSV implements the algorithm proposed by Jinge Yu and Xiangyu Luo that detects cell-type-specific spatially variable genes accounting for excess zeros. CTSV directly models raw count data through a negative binomial model and performs hypothesis testing based on R package pscl. The package aims to provide p-values and adjusted q-values for genes in each cell type for bulk ST data, and CTSV is scalable to datasets with tens of thousands of genes measured on thousands of samples. CTSV can be installed in Windows, Linux, and Mac OS.  
+The R package CTSV implements the CTSV approach developed by Jinge Yu and Xiangyu Luo that detects cell-type-specific spatially variable genes accounting for excess zeros. CTSV directly models sparse raw count data through a zero-inflated negative binomial regression model, incorporates cell-type proportions, and performs hypothesis testing based on R package pscl. The package outputs p-values and q-values for genes in each cell type, and CTSV is scalable to datasets with tens of thousands of genes measured on hundreds of spots. CTSV can be installed in Windows, Linux, and Mac OS. 
 
 
 ## Prerequisites and Installation
@@ -21,7 +21,7 @@ The following shows an example that runs the main functions "ctsv" and "SVGene" 
 library(CTSV)
 
 #read example data
-data(example)
+data(example_data)
 # gene number
 G <- ncol(Y)
 # spot number
