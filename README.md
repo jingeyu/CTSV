@@ -7,6 +7,7 @@ The R package CTSV implements the CTSV approach developed by Jinge Yu and Xiangy
 
 1. R version >= 4.0.5.
 2. CRAN package: stats (>= 4.1.0), doParallel (>= 1.0.16), doSNOW (>= 1.0.19), foreach (>= 1.5.1), pscl (>= 1.5.5)
+
    Bioconductor package: qvalue (>=2.24.0)
   
 3. Install the package CTSV.
