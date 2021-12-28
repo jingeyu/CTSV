@@ -6,7 +6,7 @@ Date: 2021-12-27
 Author: Jinge Yu, Xiangyu Luo
 Maintainer: Jinge Yu <yjgruc@ruc.edu.cn>
 Description: The R package CTSV implements the CTSV approach developed by Jinge Yu and Xiangyu Luo that detects cell-type-specific spatially variable genes accounting for excess zeros. CTSV directly models sparse raw count data through a zero-inflated negative binomial regression model, incorporates cell-type proportions, and performs hypothesis testing based on R package pscl. The package outputs p-values and q-values for genes in each cell type, and CTSV is scalable to datasets with tens of thousands of genes measured on hundreds of spots. CTSV can be installed in Windows, Linux, and Mac OS. 
-Depends: R (>= 4.0.5), stats, pscl, doSNOW, foreach, qvalue, doParallel,
+Depends: R (>= 4.0.0), stats, pscl, doSNOW, foreach, qvalue, doParallel,
         knitr
 License: GPL (>= 2)
 RoxygenNote: 7.1.1
