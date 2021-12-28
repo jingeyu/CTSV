@@ -11,9 +11,6 @@ SVGene(Q_val, thre.alpha)
 
 \item{thre.alpha}{numeric, a q-value threshold to control FDR less than thre.alpha.}
 
-\item{W}{An n by K cell-type proportion matrix, where n is the number of spots and K is the number of cell types.}
-
-\item{num_core}{Number of cores if using paralleling. The default is one.}
 }
 \value{
 A list with a G by 2K 0-1 matrix and a list with names of SV genes in each cell type. The first K columns of the 0-1 matrix correspond to the coordinate of \eqn{S_1}, and the last K columns to the coordinate of \eqn{S_2}.
