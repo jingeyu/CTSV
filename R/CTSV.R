@@ -9,7 +9,7 @@
 #' @examples
 #' library(CTSV)
 #' #read example data
-#' data(example)
+#' data(example_data)
 #' # gene number
 #' G <- ncol(Y)
 #' # spot number
