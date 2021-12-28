@@ -27,7 +27,7 @@ Detecting cell-type-specific spatially variable genes using CTSV.
 library(CTSV)
 
 #read example data
-data(example)
+data(example_data)
 # gene number
 G <- ncol(Y)
 # spot number
