@@ -125,7 +125,6 @@ ctsv <- function(Y, loc, W, num_core=1){
                 p_val <- rep(-1,2*K)
             } else{
                 p_val <- coef(summary(fm_zinb0))$count[,4]
-                nind <- 2*(length(p_val) - 1)/3
                 p_val <- p_val[1:(2*K)]
                 
             }
