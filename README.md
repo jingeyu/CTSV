@@ -27,9 +27,12 @@ The following shows an example that runs the main functions "ctsv" and "SVGene" 
 
 ``` {r, eval=FALSE}
 library(CTSV)
-
 #read example data
 data(CTSVexample_data)
+Y <- CTSVexample_data[[4]]
+W <- CTSVexample_data[[3]]
+loc <- CTSVexample_data[[2]]
+gamma_true <- CTSVexample_data[[1]]
 # gene number
 G <- ncol(Y)
 # spot number
@@ -45,14 +48,12 @@ print(sum(rowSums(gamma_true)>0))
 
 #--- Run CTSV ----
 result <- ctsv(Y,loc,W,num_core = 8)
-
 # View on q-value matrix
 head(result$qval)
-
 # detect SV genes
 re <- svGene(result$qval,0.05)
 #SV genes in each cell type:
-print(re$svGene)
+print(re$SVGene)
 ```
 or you can simply run
 ``` {r, eval=FALSE}
