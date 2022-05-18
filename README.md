@@ -26,7 +26,7 @@ The following shows an example that runs the main functions "ctsv" and "SVGene" 
 library(CTSV)
 
 #read example data
-data(example_data)
+data(CTSVexample_data)
 # gene number
 G <- ncol(Y)
 # spot number
@@ -47,15 +47,14 @@ result <- ctsv(Y,loc,W,num_core = 8)
 head(result$qval)
 
 # detect SV genes
-re <- SVGene(result$qval,0.05)
+re <- svGene(result$qval,0.05)
 #SV genes in each cell type:
-print(re$SVGene)
+print(re$svGene)
 ```
 or you can simply run
 ``` {r, eval=FALSE}
 library(CTSV)
 example(ctsv)
-example(SVGene)
 ```
 
 ## Remarks
