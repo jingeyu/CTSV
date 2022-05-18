@@ -13,7 +13,9 @@ The R package CTSV implements the CTSV approach developed by Jinge Yu and Xiangy
 3. Install the package CTSV.
 
 ```
-devtools::install_github("jingeyu/CTSV")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("CTSV", version = "devel")
 ```
 
 
@@ -53,6 +55,7 @@ or you can simply run
 ``` {r, eval=FALSE}
 library(CTSV)
 example(ctsv)
+example(SVGene)
 ```
 
 ## Remarks
