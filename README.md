@@ -17,7 +17,10 @@ if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
 BiocManager::install("CTSV", version = "devel")
 ```
-
+or
+```
+devtools::install_github("jingeyu/CTSV")
+```
 
 ## Example Code
 The following shows an example that runs the main functions "ctsv" and "SVGene" in our package. 
