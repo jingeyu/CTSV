@@ -1,41 +1,27 @@
 context("correct input files for ctsv function")
-
 data(CTSVexample_data)
-Y <- CTSVexample_data[[4]]
-W <- CTSVexample_data[[3]]
-loc <- CTSVexample_data[[2]]
-
+spe <- CTSVexample_data[[1]]
+W <- CTSVexample_data[[2]]
+gamma_true <- CTSVexample_data[[3]]
 test_that("errors are returned when there are missing inputs",{
-    
     expect_error(ctsv(),
                  "Please*")
-    expect_error(ctsv(Y=Y),
+    expect_error(ctsv(spe),
                  "Please*")
-    expect_error(ctsv(Y=Y,loc = loc),
-                 "Please*")
-    
-})
+})  
 
 test_that("errors are returned when expression data, loaction matrix, cell-type proportion matrix and number of cores are not in correct format",{
     
-    expect_error(ctsv(Y = as.character(Y),loc = loc,W=W,num_core = 1),
+    expect_error(ctsv(spe = W,W=W,num_core = 1),
                  "Please*")  
-    expect_error(ctsv(Y = Y,loc = as.character(loc),W=W,num_core = 1),
+    expect_error(ctsv(spe = spe,W=as.character(W),num_core = 1),
                  "Please*")  
-    expect_error(ctsv(Y = Y,loc = loc,W=as.character(W),num_core = 1),
+    expect_error(ctsv(spe = spe,W=W,num_core = 1.5),
                  "Please*")  
-    expect_error(ctsv(Y = Y,loc = loc,W=W,num_core = 1.5),
-                 "Please*")  
-    expect_error(ctsv(Y = Y[-2,],loc = loc,W=W),
-                 "Please*")  
-    expect_error(ctsv(Y = Y,loc = loc[-3,],W=W),
-                 "Please*")  
-    expect_error(ctsv(Y = Y,loc = loc,W=W[-1,]),
-                 "Please*")  
-    spot <- rownames(Y)
+    spot <- rownames(W)
     spot[1] <- "my"
-    rownames(Y) <- spot
-    expect_error(ctsv(Y = Y,loc = loc,W=W),
+    rownames(W) <- spot
+    expect_error(ctsv(spe = spe,W=W),
                  "Please*")  
 })
 
