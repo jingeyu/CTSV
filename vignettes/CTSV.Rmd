@@ -6,7 +6,7 @@ author:
   email: "yjgruc@ruc.edu.cn"
 package: CTSV
 date: "`r Sys.Date()`"
-output:  
+output:    
   html_document:
     keep_md: yes
   rmarkdown::html_vignette:
@@ -19,6 +19,7 @@ vignette: >
 
 ```{r setup,results = 'hide'}
 library(CTSV,quietly = TRUE)
+library(SpatialExperiment)
 ```
 
 ```{r, include = FALSE}
@@ -38,12 +39,10 @@ In order to run RCTD, the first step is to get cell-type proportions. There are 
 ```{r ST}
 library(CTSV)
 data("CTSVexample_data", package="CTSV")
-# dir <- system.file(package = 'CTSV') #directory for the example data
-# load(paste0(dir,"/CTSVexample_data.RData"))
-Y <- CTSVexample_data[[4]]
-W <- CTSVexample_data[[3]]
-loc <- CTSVexample_data[[2]]
-gamma_true <- CTSVexample_data[[1]]                                                                                                                 
+spe <- CTSVexample_data[[1]]
+W <- CTSVexample_data[[2]]
+gamma_true <- CTSVexample_data[[3]]
+Y <- spe@assays@data$counts
 # zero rate in data:
 print(summary(rowMeans(Y==0)))
 # dimension of bulk ST data
@@ -61,14 +60,13 @@ print(sum(rowSums(gamma_true)>0))
 ## Running CTSV
 We are now ready to run CTSV on the bulk ST data using `ctsv` function. 
 
-* `Y` is a $n \times G$ count bulk ST data matrix, where each row stands for a spot and each column represents a gene.
-* `loc` is a $n \times 2$ location matrix, where each row is a two-dimensional coordinate for the corresponding spot.
+* `spe` is a $n \times G$ count bulk ST data matrix, where each row stands for a spot and each column represents a gene.
 * `W` is the cell-type-specific matrix with $n\times K$ dimensions, where $K$ is the number of cell types.
-* `num_core:` for parallel processing, the number of cores used. If set to 1, parallel processing is not used. The system will additionally be checked for number of available cores. Note, that we recommend setting `num_core` to at 
-least `4` or `8` to improve efficiency.
+* `num_core:` for parallel processing, the number of cores used. If set to 1, parallel processing is not used. The system will additionally be checked for number of available cores. Note, that we recommend setting `num_core` to at least `4` or `8` to improve efficiency.
+* `BPPARAM:` Optional additional argument for parallelization. The default is NULL, in which case `num_core` will be used instead.
 
 ```{r Run CTSV}
-result <- ctsv(Y,loc,W,num_core = 8)
+result <- ctsv(spe,W,num_core = 8)
 ```
 
 ## CTSV results
