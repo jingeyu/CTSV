@@ -37,7 +37,6 @@ Cell-type-specific Spatially Variable gene detection, or CTSV, is an R package f
 ## Load example data
 In order to run RCTD, the first step is to get cell-type proportions. There are some deconvolution methods such as RCTD, SPOTlight and SpatialDWLS. We provide an example data including observed raw count bulk ST data, location coordinate matrix, cell-type proportion matrix and the true SV gene patterns.
 ```{r ST}
-library(CTSV)
 data("CTSVexample_data", package="CTSV")
 spe <- CTSVexample_data[[1]]
 W <- CTSVexample_data[[2]]
