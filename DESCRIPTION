@@ -10,10 +10,11 @@ Description: The R package CTSV implements the CTSV approach developed by Jinge 
 biocViews: GeneExpression, StatisticalMethod, Regression, Spatial,
         Genetics
 Depends: R (>= 4.0.0)
-Imports: stats, pscl, qvalue, BiocParallel,methods,knitr
+Imports: stats, pscl, qvalue, BiocParallel,methods,knitr, SpatialExperiment
 Suggests: rmarkdown, testthat
 License: GPL-3
 RoxygenNote: 7.2.0
-Encoding: UTF-8
+Encoding: UTF-8 
 NeedsCompilation: yes
 VignetteBuilder: knitr
+ 

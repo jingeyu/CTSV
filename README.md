@@ -2,7 +2,6 @@
 
 The R package CTSV implements the CTSV approach developed by Jinge Yu and Xiangyu Luo that detects cell-type-specific spatially variable genes accounting for excess zeros. CTSV directly models sparse raw count data through a zero-inflated negative binomial regression model, incorporates cell-type proportions, and performs hypothesis testing based on R package pscl. The package outputs p-values and q-values for genes in each cell type, and CTSV is scalable to datasets with tens of thousands of genes measured on hundreds of spots. CTSV can be installed in Windows, Linux, and Mac OS. 
 
-
 ## Prerequisites and Installation
 
 1. R version >= 4.0.0.
@@ -29,25 +28,25 @@ The following shows an example that runs the main functions "ctsv" and "SVGene" 
 library(CTSV)
 #read example data
 data(CTSVexample_data)
-Y <- CTSVexample_data[[4]]
-W <- CTSVexample_data[[3]]
-loc <- CTSVexample_data[[2]]
-gamma_true <- CTSVexample_data[[1]]
+spe <- CTSVexample_data[[1]]
+W <- CTSVexample_data[[2]]
+gamma_true <- CTSVexample_data[[3]]
 # gene number
-G <- ncol(Y)
+G <- nrow(spe)
 # spot number
-n <- nrow(Y)
+n <- ncol(spe)
 # cell type number
 K <- ncol(W)
-
+print(G)
+print(n)
+print(K)
 # SV genes in each cell type:
-print(colnames(Y)[which(gamma_true[,1] == 1)])
-print(colnames(Y)[which(gamma_true[,2] == 1)])
+#' print(rownames(W)[which(gamma_true[,1] == 1)])
+#' print(rownames(W)[which(gamma_true[,2] == 1)])
 # Number of SV genes at the aggregated level:
 print(sum(rowSums(gamma_true)>0))
-
 #--- Run CTSV ----
-result <- ctsv(Y,loc,W,num_core = 8)
+result <- ctsv(spe,W,num_core = 8)
 # View on q-value matrix
 head(result$qval)
 # detect SV genes
