@@ -2,14 +2,14 @@
 # Internal functions to be used in the CTSV function
 ################################################################
 .P_gene <- function(g,Y,Tmp,h1,h2){
-    y <- Y[,g]
+    y <- Y[,g]  
     K <- ncol(Tmp)/3
     ell <- rowSums(Y) / median(rowSums(Y))
     err <- try(fm_zinb0 <- pscl::zeroinfl(y ~ -1+offset(log(ell))+Tmp|1,
                                           dist = "negbin",link = "probit",
                                           control = zeroinfl.control(method = "CG"
                                           )), silent = TRUE)
-    is_err <- methods::is(err,"class")
+    is_err <- methods::is(err,"try-error")
     if(is_err){
         p_val <- rep(-1,2*K)
     }else{
@@ -20,11 +20,15 @@
     
 }
 
+################################################################
+# Output functions to be used in the CTSV function
+################################################################
+
 #' @title Detection of cell-type-specific spatially variable genes
-#' @param Y An n by G bulk ST raw count data matrix, where n is the spot number and G is the gene number. Each row stands for a spot and each column represents a gene. The column names of Y (i.e. gene names) must be specified, and the row names of Y must be consistent with row names of loc and W.
-#' @param loc An n by 2 location matrix, where each row corresponds to a spot and records the two-dimensional coordinate of that spot.rd
+#' @param spe An SpatialExperiment class.
 #' @param W An n by K cell-type proportion matrix, where K is the number of cell types. The column names of W are cell type names.
 #' @param num_core Number of cores if using paralleling. The default is one.
+#' @param BPPARAM Optional additional argument for parallelization. The default is NULL, in which case \code{num_core} will be used instead. If provided, this should be an instance of \code{BiocParallelParam}. For most users, the recommended option is to use the \code{num_core} argument instead. 
 #' @return A list with a G by 2K matrix of p-values and a G by 2K matrix of q-values.
 #' \item{pval}{A G by 2K matrix of p-values. The first K columns correspond to the first coordinate, and the last K columns to the second coordinate.}
 #' \item{qval}{A G by 2K matrix of q-values. The first K columns correspond to the first coordinate, and the last K columns to the second coordinate.}
@@ -32,25 +36,25 @@
 #' library(CTSV)
 #' #read example data
 #' data(CTSVexample_data)
-#' Y <- CTSVexample_data[[4]]
-#' W <- CTSVexample_data[[3]]
-#' loc <- CTSVexample_data[[2]]
-#' gamma_true <- CTSVexample_data[[1]]
+#' spe <- CTSVexample_data[[1]]
+#' W <- CTSVexample_data[[2]]
+#' gamma_true <- CTSVexample_data[[3]]
 #' # gene number
-#' G <- ncol(Y)
+#' G <- nrow(spe)
 #' # spot number
-#' n <- nrow(Y)
+#' n <- ncol(spe)
 #' # cell type number
 #' K <- ncol(W)
-#' 
+#' print(G)
+#' print(n)
+#' print(K)
 #' # SV genes in each cell type:
-#' print(colnames(Y)[which(gamma_true[,1] == 1)])
-#' print(colnames(Y)[which(gamma_true[,2] == 1)])
+#' print(rownames(W)[which(gamma_true[,1] == 1)])
+#' print(rownames(W)[which(gamma_true[,2] == 1)])
 #' # Number of SV genes at the aggregated level:
 #' print(sum(rowSums(gamma_true)>0))
-#' 
 #' #--- Run CTSV ----
-#' result <- ctsv(Y,loc,W,num_core = 8)
+#' result <- ctsv(spe,W,num_core = 8)
 #' # View on q-value matrix
 #' head(result$qval)
 #' # detect SV genes
@@ -58,12 +62,9 @@
 #' #SV genes in each cell type:
 #' print(re$SVGene)
 #' @export
-ctsv <- function(Y, loc, W, num_core=1){
-    if (missing(Y)) {
-        stop("Please include gene expression data!")
-    }
-    if (missing(loc)) {
-        stop("Please include location matrix!")
+ctsv <- function(spe, W, num_core=1, BPPARAM = NULL){
+    if (missing(spe)) {
+        stop("Please include SpatialExperient class object!")
     }
     if (missing(W)) {
         stop("Please include cell-type proportion matrix!")
@@ -71,32 +72,38 @@ ctsv <- function(Y, loc, W, num_core=1){
     if(as.integer(num_core)!=as.numeric(num_core)){
         stop("Please input integer num of cores!")
     }
-    if(!is.matrix(Y) | !is.matrix(W) | !is.matrix(loc)){
-        stop("Please input the matrix type of \"Y\", \"W\", and \"loc\"!")
+    if(is.null(rownames(spe))|is.null(colnames(spe))){
+        stop("Please include rownames and colnames of SpatialExperiment class object!")
+        
     }
-    if(is.null(colnames(Y))){
-        stop("Please give colnames for the spatial expression matrix (gene names)!")
+    if(!is(spe,"SpatialExperiment")){
+        stop("Please input SpatialExperiment class object!")
     }
+    if(!is.matrix(W)){
+        stop("Please input the matrix type of \"W\"!")
+    }
+    if(is.null(spe@assays@data$counts)){
+        stop("Please adds the \"counts\" slot of \"SimpleList\" object of the SpatialExperiment class object!")
+    }
+    Y <- t(spe@assays@data$counts)
+    loc <- spatialCoords(spe)
     if(sum(is.na(Y))>0 | sum(is.na(loc))>0 | sum(is.na(W)) > 0){
         stop("Please remove NaNs in the datasets!")
     }
-    if(sum(rowSums(Y) == 0)>0){
-        stop("Please remove genes having zero values across all spots!")
+    if(sum(rowSums(Y) == 0)>0|sum(colSums(Y) == 0)>0){
+        stop("Please remove genes having zero values across all spots or remove spots having zero values across all genes all genes!")
     }
-    if(sum(colSums(Y) == 0)>0){
-        stop("Please remove spots having zero values across all genes!")
+    if(sum(colSums(W) == 0)>0|sum(rowSums(W) == 0)>0){
+        stop("Please remove cell types having zero proportion across all spots or spots having zero proportion across all cell types!")
     }
-    if(sum(colSums(W) == 0)>0){
-        stop("Please remove cell types having zero proportion across all spots!")
-    }
-    if(sum(rowSums(W) == 0)>0){
-        stop("Please remove spots having zero proportion across all cell types!")
-    }
-    if(nrow(Y)!=nrow(loc) | nrow(loc)!=nrow(W) | nrow(Y)!=nrow(W)){
+    if(nrow(loc)!=nrow(W)){
         stop("Please keep the number of spots consistent in gene expression data matrix, location coordinate matrix and cell-type proportion matrix!")
     }
-    if(sum(rownames(Y)!= rownames(loc))>0 | sum(rownames(W)!= rownames(loc))>0 | sum(rownames(Y)!= rownames(W))>0){
+    if(sum(rownames(W)!= colnames(spe))>0){
         stop("Please match spots' names in gene expression data matrix, location coordinate matrix, and cell-type proportion matrix!")
+    }
+    if (is.null(BPPARAM)) {
+        BPPARAM <- BiocParallel::MulticoreParam(workers = num_core)
     }
     # make sure the sum of cell type proportions is equal to 1 in each spot.    
     W <- W / rowSums(W)
@@ -115,7 +122,6 @@ ctsv <- function(Y, loc, W, num_core=1){
     psi1 <- quantile(abs(S[,1]), quan)
     psi2 <- quantile(abs(S[,2]), quan)
     P_VAL <- array(NA, dim = c(G, 2*K, 5))
-    bp_param <- BiocParallel::MulticoreParam(workers=num_core)
     pattern <- c("linear","gau1","gau2","cos1","cos2")
     for(fit_pat in pattern){
         if(fit_pat == "gau1"){
@@ -134,9 +140,10 @@ ctsv <- function(Y, loc, W, num_core=1){
             h1 <- S[,1]
             h2 <- S[,2]
         }
+        print(fit_pat)
         Tmp <- cbind(W * h1, W * h2, W)
         colnames(Tmp) <- seq_len(ncol(Tmp))
-        res <- do.call(rbind,BiocParallel::bplapply(seq_len(G),.P_gene,BPPARAM = bp_param,Y=Y,Tmp = Tmp,h1=h1,h2=h2))
+        res <- do.call(rbind,BiocParallel::bplapply(seq_len(G),.P_gene,BPPARAM = BPPARAM,Y=Y,Tmp = Tmp,h1=h1,h2=h2))
         P_VAL[,,match(fit_pat,pattern)] <- res
         rownames(P_VAL[,,match(fit_pat,pattern)]) <- colnames(Y)
     }
