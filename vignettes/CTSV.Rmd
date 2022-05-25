@@ -18,8 +18,8 @@ vignette: >
 ---
 
 ```{r setup,results = 'hide'}
-library(CTSV,quietly = TRUE)
-library(SpatialExperiment)
+suppressPackageStartupMessages(library(CTSV))
+suppressPackageStartupMessages(library(SpatialExperiment))
 ```
 
 ```{r, include = FALSE}
@@ -60,7 +60,7 @@ print(sum(rowSums(gamma_true)>0))
 ## Running CTSV
 We are now ready to run CTSV on the bulk ST data using `ctsv` function. 
 
-* `spe` is a $n \times G$ count bulk ST data matrix, where each row stands for a spot and each column represents a gene.
+* `spe` is a SpatialExperiment class object.
 * `W` is the cell-type-specific matrix with $n\times K$ dimensions, where $K$ is the number of cell types.
 * `num_core:` for parallel processing, the number of cores used. If set to 1, parallel processing is not used. The system will additionally be checked for number of available cores. Note, that we recommend setting `num_core` to at least `4` or `8` to improve efficiency.
 * `BPPARAM:` Optional additional argument for parallelization. The default is NULL, in which case `num_core` will be used instead.
