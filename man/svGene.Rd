@@ -4,7 +4,7 @@
 \alias{svGene}
 \title{Report spatially variable genes}
 \usage{
-svGene(Q_val, thre.alpha)
+svGene(Q_val, thre.alpha = 0.05)
 }
 \arguments{
 \item{Q_val}{A G by 2K q-value matrix, where G is the number of genes and K is the number of cell types.}
