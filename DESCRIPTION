@@ -2,7 +2,7 @@ Package: CTSV
 Type: Package
 Title: Identification of cell-type-specific spatially variable genes
         accounting for excess zeros
-Version: 0.99.4
+Version: 0.99.5
 Date: 2022-05-09
 Authors@R: c(person("Jinge Yu", "Developer", role = c("aut","cre"),email = "yjgruc@ruc.edu.cn"),
              person("Xiangyu Luo", "Developer", role = "aut",email = "xiangyuluo@ruc.edu.cn"))
