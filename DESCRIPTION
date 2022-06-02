@@ -2,7 +2,7 @@ Package: CTSV
 Type: Package
 Title: Identification of cell-type-specific spatially variable genes
         accounting for excess zeros
-Version: 0.99.3
+Version: 0.99.5
 Date: 2022-05-09
 Authors@R: c(person("Jinge Yu", "Developer", role = c("aut","cre"),email = "yjgruc@ruc.edu.cn"),
              person("Xiangyu Luo", "Developer", role = "aut",email = "xiangyuluo@ruc.edu.cn"))
@@ -10,10 +10,15 @@ Description: The R package CTSV implements the CTSV approach developed by Jinge 
 biocViews: GeneExpression, StatisticalMethod, Regression, Spatial,
         Genetics
 Depends: R (>= 4.0.0)
-Imports: stats, pscl, qvalue, BiocParallel,methods,knitr, SpatialExperiment
+Imports: stats, pscl, qvalue, BiocParallel,methods,knitr,
+        SpatialExperiment
 Suggests: rmarkdown, testthat
 License: GPL-3
 RoxygenNote: 7.2.0
 Encoding: UTF-8
 NeedsCompilation: yes
 VignetteBuilder: knitr
+Packaged: 2022-06-02 04:59:09 UTC; jinge.yu
+Author: Jinge Yu Developer [aut, cre],
+  Xiangyu Luo Developer [aut]
+Maintainer: Jinge Yu Developer <yjgruc@ruc.edu.cn>
