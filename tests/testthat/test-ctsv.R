@@ -20,11 +20,7 @@ test_that("errors are returned when expression data, loaction matrix, cell-type 
     expect_error(CTSV(spe = spe,W=W,num_core = 1.5),
                  "Input*")  
     expect_equal(ncol(spe), nrow(W))
-    spot <- rownames(W)
-    spot[1] <- "my"
-    rownames(W) <- spot
-    expect_error(CTSV(spe = spe,W=W),
-                 "Keep*")  
+
 })
 
 test_that("The return of CTSV function",{
@@ -36,3 +32,13 @@ test_that("The return of CTSV function",{
     expect_equal(nrow(result$pval),nrow(spe))
     expect_equal(dim(result$pval), dim(result$qval))
 })  
+
+
+
+test_that("The input problems of CTSV function",{
+spot <- rownames(W)
+spot[1] <- "my"
+rownames(W) <- spot
+expect_error(CTSV(spe = spe,W=W),
+             "Keep*")  
+})
