@@ -7,7 +7,7 @@ test_that("errors are returned when there are missing inputs",{
     expect_error(svGene(),
                  "Include*")
 })
-
+ 
 test_that("errors are returned when the q-value matrix and threshold are not in correct format",{
     expect_error(svGene(Q_val=Q_val, thre.alpha=2),
                  "The threshold*")  

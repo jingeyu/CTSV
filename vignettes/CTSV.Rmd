@@ -80,7 +80,7 @@ matrix, cell-type proportion matrix and the true SV gene patterns.
 suppressPackageStartupMessages(library(CTSV))
 suppressPackageStartupMessages(library(SpatialExperiment))
 ```
-
+ 
 ```{r ST}
 data("CTSVexample_data", package="CTSV")
 spe <- CTSVexample_data[[1]]

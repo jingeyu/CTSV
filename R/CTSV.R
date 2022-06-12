@@ -68,7 +68,7 @@ CTSV <- function(spe, W, num_core=1, BPPARAM = NULL){
     }
     if (missing(W) || !is.matrix(W)) {
         stop("Include cell-type proportion matrix of the matrix type.")
-    }
+    } 
     if(as.integer(num_core) != as.numeric(num_core)){
         stop("Input integer num of cores.")
     }
