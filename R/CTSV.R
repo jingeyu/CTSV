@@ -54,7 +54,7 @@
 #' # Number of SV genes at the aggregated level:
 #' print(sum(rowSums(gamma_true)>0))
 #' #--- Run CTSV ----
-#' result <- ctsv(spe,W,num_core = 8)
+#' result <- CTSV(spe,W,num_core = 8)
 #' # View on q-value matrix
 #' head(result$qval)
 #' # detect SV genes
@@ -62,45 +62,23 @@
 #' #SV genes in each cell type:
 #' print(re$SVGene)
 #' @export
-ctsv <- function(spe, W, num_core=1, BPPARAM = NULL){
-    if (missing(spe)) {
-        stop("Please include SpatialExperient class object!")
+CTSV <- function(spe, W, num_core=1, BPPARAM = NULL){
+    if (missing(spe) || !is(spe,"SpatialExperiment") || is.null(rownames(spe)) || is.null(colnames(spe))) {
+        stop("Include SpatialExperient class object with rownames and colnames")
     }
-    if (missing(W)) {
-        stop("Please include cell-type proportion matrix!")
+    if (missing(W) || !is.matrix(W)) {
+        stop("Include cell-type proportion matrix of the matrix type.")
     }
-    if(as.integer(num_core)!=as.numeric(num_core)){
-        stop("Please input integer num of cores!")
+    if(as.integer(num_core) != as.numeric(num_core)){
+        stop("Input integer num of cores.")
     }
-    if(is.null(rownames(spe))|is.null(colnames(spe))){
-        stop("Please include rownames and colnames of SpatialExperiment class object!")
-        
-    }
-    if(!is(spe,"SpatialExperiment")){
-        stop("Please input SpatialExperiment class object!")
-    }
-    if(!is.matrix(W)){
-        stop("Please input the matrix type of \"W\"!")
-    }
-    if(is.null(spe@assays@data$counts)){
-        stop("Please adds the \"counts\" slot of \"SimpleList\" object of the SpatialExperiment class object!")
-    }
-    Y <- t(spe@assays@data$counts)
+    Y <- t(assay(spe))
     loc <- spatialCoords(spe)
-    if(sum(is.na(Y))>0 | sum(is.na(loc))>0 | sum(is.na(W)) > 0){
-        stop("Please remove NaNs in the datasets!")
+    if(sum(is.na(Y))>0 | sum(is.na(loc))>0 || sum(is.na(W)) > 0 || sum(rowSums(Y) == 0)>0 || sum(colSums(Y) == 0)>0 || sum(colSums(W) == 0)>0 || sum(rowSums(W) == 0)>0){
+        stop("Remove NaNs, columns with all zeros and rows with all zeros in datasets.")
     }
-    if(sum(rowSums(Y) == 0)>0|sum(colSums(Y) == 0)>0){
-        stop("Please remove genes having zero values across all spots or remove spots having zero values across all genes all genes!")
-    }
-    if(sum(colSums(W) == 0)>0|sum(rowSums(W) == 0)>0){
-        stop("Please remove cell types having zero proportion across all spots or spots having zero proportion across all cell types!")
-    }
-    if(nrow(loc)!=nrow(W)){
-        stop("Please keep the number of spots consistent in gene expression data matrix, location coordinate matrix and cell-type proportion matrix!")
-    }
-    if(sum(rownames(W)!= colnames(spe))>0){
-        stop("Please match spots' names in gene expression data matrix, location coordinate matrix, and cell-type proportion matrix!")
+    if(nrow(loc)!= nrow(W) || sum(rownames(W) != colnames(spe))>0){
+        stop("Keep the number and names of spots consistent in gene expression matrix, location coordinate matrix and cell-type proportion matrix.")
     }
     if (is.null(BPPARAM)) {
         BPPARAM <- BiocParallel::MulticoreParam(workers = num_core)
@@ -140,7 +118,7 @@ ctsv <- function(spe, W, num_core=1, BPPARAM = NULL){
             h1 <- S[,1]
             h2 <- S[,2]
         }
-        print(fit_pat)
+        # print(fit_pat)
         Tmp <- cbind(W * h1, W * h2, W)
         colnames(Tmp) <- seq_len(ncol(Tmp))
         res <- do.call(rbind,BiocParallel::bplapply(seq_len(G),.P_gene,BPPARAM = BPPARAM,Y=Y,Tmp = Tmp,h1=h1,h2=h2))
@@ -182,13 +160,13 @@ ctsv <- function(spe, W, num_core=1, BPPARAM = NULL){
 #' @export
 svGene <- function(Q_val, thre.alpha=0.05){
     if (missing(Q_val)) {
-        stop("Please include gene expression data!")
+        stop("Include gene expression data.")
     }
     if(is.null(rownames(Q_val))){
-        stop("Please name rows of q-value matrix with corresponding gene names!")
+        stop("Name rows of q-value matrix with corresponding gene names.")
     }
     if(thre.alpha < 0 | thre.alpha > 1){
-        stop("Please limit the threshold between the rangeo of 0 and 1.")
+        stop("The threshold limit must between 0 and 1.")
     }
     G <- nrow(Q_val)
     K <- ncol(Q_val)/2

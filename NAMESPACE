@@ -9,9 +9,10 @@ importFrom(stats,median)
 importFrom(BiocParallel,bplapply) 
 importFrom("methods", "is")
 importFrom(SpatialExperiment,spatialCoords)
+importFrom(SummarizedExperiment,assay)
 import(knitr)
 
-export(ctsv,
+export(CTSV,
        svGene)
 
  

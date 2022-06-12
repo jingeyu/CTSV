@@ -1,58 +1,97 @@
 ---
 title: "Applying CTSV to Spatial Transcriptomics Data"
-author:
-- name: "Jinge Yu"
-  affiliation: "Institute of Statistics and Big Data, Renmin University of China"
-  email: "yjgruc@ruc.edu.cn"
-package: CTSV
-date: "`r Sys.Date()`"
-output:    
-  html_document:
-    keep_md: yes
-  rmarkdown::html_vignette:
-    keep_md: yes
+author: 
+  - name: Jinge Yu
+    affiliation:
+    - Institute of Statistics and Big Data, Renmin University of China
+    email: yjgruc@ruc.edu.cn
+  - name: Xiangyu Luo 
+    affiliation: 
+    - Institute of Statistics and Big Data, Renmin University of China
+    email: xiangyuluo@ruc.edu.cn
+output: 
+  BiocStyle::html_document:
+    self_contained: yes
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    code_folding: show
+date: "`r doc_date()`"
+package: "`r pkg_ver('CTSV')`"
 vignette: >
-  %\VignetteIndexEntry{Cell-type-specific spatially variable gene detection}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Basic Usage}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}  
 ---
 
-```{r setup,results = 'hide'}
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>",
+    crop = NULL 
+)
+```
+
+
+```{r vignetteSetup, echo=FALSE, message=FALSE, warning = FALSE}
+## Track time spent on making the vignette
+startTime <- Sys.time()
+```
+
+# Introduction
+Cell-type-specific Spatially Variable gene detection, or CTSV, is an R package
+for identifying cell-type-specific spatially variable genes in bulk sptial 
+transcriptomics data. In this Vignette, we will introduce a standard workflow 
+of CTSV. By utilizing single-cell RNA sequencing data as reference, we got 
+cell-type proportions in each spot. Then we take the cell type proportion, 
+location coordinates and spatial expression data as input to CTSV.
+
+# Usage guide    
+
+## Install `CTSV`  
+
+`r Biocpkg("CTSV")` is an `R` package available via the [Bioconductor](http://bioconductor.org) repository for packages. It requires 
+installing the `R` open source statistical programming language, which can be 
+accessed on any operating system from [CRAN](https://cran.r-project.org/). 
+After which you can install `r Biocpkg("CTSV")` by using the following commands 
+in your `R` session:
+
+```{r "install", eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+      install.packages("BiocManager")
+  }
+
+BiocManager::install("CTSV")
+
+## Check that you have a valid Bioconductor installation
+BiocManager::valid()
+```
+
+If there are any issues with the installation procedure or package features, 
+the best place would be to file an issue at the GitHub [repository](https://github.com/jingeyu/CTSV).
+
+## Load example data
+In order to run RCTD, the first step is to get cell-type proportions. There are 
+some deconvolution methods such as RCTD, SPOTlight and SpatialDWLS. We provide 
+an example data including observed raw count bulk ST data, location coordinate 
+matrix, cell-type proportion matrix and the true SV gene patterns.
+
+```{r library packages,results = 'hide'}
 suppressPackageStartupMessages(library(CTSV))
 suppressPackageStartupMessages(library(SpatialExperiment))
 ```
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  cache = TRUE,
-  out.width = "100%"
-)
-```
-## Introduction
-Cell-type-specific Spatially Variable gene detection, or CTSV, is an R package for identifying cell-type-specific spatially variable genes in bulk sptial transcriptomics data. In this Vignette, we will introduce a standard workflow of CTSV. By utilizing single-cell RNA sequencing data as reference, we got cell type proportions in each spot. Then we take the cell type proportion, location coordinates and spatial expression data as input to CTSV.
-
-
-## Load example data
-In order to run RCTD, the first step is to get cell-type proportions. There are some deconvolution methods such as RCTD, SPOTlight and SpatialDWLS. We provide an example data including observed raw count bulk ST data, location coordinate matrix, cell-type proportion matrix and the true SV gene patterns.
 ```{r ST}
 data("CTSVexample_data", package="CTSV")
 spe <- CTSVexample_data[[1]]
 W <- CTSVexample_data[[2]]
 gamma_true <- CTSVexample_data[[3]]
-Y <- spe@assays@data$counts
-# zero rate in data:
-print(summary(rowMeans(Y==0)))
-# dimension of bulk ST data
-print(dim(Y))
-# dimension of cell-type proportion matrix:
-print(dim(W))
+Y <- assay(spe)
 # SV genes in each cell type:
-print(colnames(Y)[which(gamma_true[,1] == 1)])
-print(colnames(Y)[which(gamma_true[,2] == 1)])
+colnames(Y)[which(gamma_true[,1] == 1)]
+colnames(Y)[which(gamma_true[,2] == 1)]
 # Number of SV genes at the aggregated level:
-print(sum(rowSums(gamma_true)>0))
+sum(rowSums(gamma_true)>0)
 ```
 
 
@@ -60,35 +99,45 @@ print(sum(rowSums(gamma_true)>0))
 We are now ready to run CTSV on the bulk ST data using `ctsv` function. 
 
 * `spe` is a SpatialExperiment class object.
-* `W` is the cell-type-specific matrix with $n\times K$ dimensions, where $K$ is the number of cell types.
-* `num_core:` for parallel processing, the number of cores used. If set to 1, parallel processing is not used. The system will additionally be checked for number of available cores. Note, that we recommend setting `num_core` to at least `4` or `8` to improve efficiency.
-* `BPPARAM:` Optional additional argument for parallelization. The default is NULL, in which case `num_core` will be used instead.
+* `W` is the cell-type-specific matrix with $n\times K$ dimensions, where $K$ 
+is the number of cell types.
+* `num_core:` for parallel processing, the number of cores used. If set to 1, 
+parallel processing is not used. The system will additionally be checked for 
+number of available cores. Note, that we recommend setting `num_core` to at 
+least `4` or `8` to improve efficiency.
+* `BPPARAM:` Optional additional argument for parallelization. The default is 
+NULL, in which case `num_core` will be used instead.
 
 ```{r Run CTSV}
-result <- ctsv(spe,W,num_core = 8)
+result <- CTSV(spe,W,num_core = 8)
 ```
 
 ## CTSV results
 
-The results of RCTD are located in a list.
+The results of CTSV are located in a list.
 
 * `pval`, combined p-values, a $G\times 2K$ matrix.
-* `qval` stores adjusted q-values of the combined p-values, it is a $G \times 2K$ matrix.
+* `qval` stores adjusted q-values of the combined p-values, it is a 
+$G \times 2K$ matrix.
 
 ```{r results}
 # View on q-value matrix
 head(result$qval)
 ```
 
-Then we want to extra SV genes with an FDR level at 0.05 using `SVGene` function. We regard the q-value matrix return by `CTSVPval` and an threhold of 0.05 as input. The result of the `SVGene` is a list containing two elements, the first of which is a $G\times 2K$ 0-1 matrix indicating SV genes in each cell type and axis.
+Then we want to extra SV genes with an FDR level at 0.05 using `SVGene` 
+function. We regard the q-value matrix return by `CTSVPval` and an threhold of 
+0.05 as input. The result of the `SVGene` is a list containing two elements, 
+the first of which is a $G\times 2K$ 0-1 matrix indicating SV genes in each cell 
+type and axis.
 
 ```{r SVgenes}
 re <- svGene(result$qval,0.05)
 # SV genes in each cell type:
-print(re$SVGene)
+re$SVGene
 ```
 
-## Session information
+# Session information
 ```{r session information}
 sessionInfo()
 ```

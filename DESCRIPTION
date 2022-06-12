@@ -2,18 +2,45 @@ Package: CTSV
 Type: Package
 Title: Identification of cell-type-specific spatially variable genes
         accounting for excess zeros
-Version: 0.99.5
-Date: 2022-05-09
-Authors@R: c(person("Jinge Yu", "Developer", role = c("aut","cre"),email = "yjgruc@ruc.edu.cn"),
-             person("Xiangyu Luo", "Developer", role = "aut",email = "xiangyuluo@ruc.edu.cn"))
-Description: The R package CTSV implements the CTSV approach developed by Jinge Yu and Xiangyu Luo that detects cell-type-specific spatially variable genes accounting for excess zeros. CTSV directly models sparse raw count data through a zero-inflated negative binomial regression model, incorporates cell-type proportions, and performs hypothesis testing based on R package pscl. The package outputs p-values and q-values for genes in each cell type, and CTSV is scalable to datasets with tens of thousands of genes measured on hundreds of spots. CTSV can be installed in Windows, Linux, and Mac OS.
-biocViews: GeneExpression, StatisticalMethod, Regression, Spatial,
-        Genetics
-Depends: R (>= 4.0.0)
-Imports: stats, pscl, qvalue, BiocParallel,methods,knitr, SpatialExperiment
-Suggests: rmarkdown, testthat
+Version: 0.99.6
+Authors@R: 
+    c(person("Jinge Yu", "Developer", role = c("aut","cre"), 
+             email = "yjgruc@ruc.edu.cn"),
+      person("Xiangyu Luo", "Developer", role = "aut",
+             email = "xiangyuluo@ruc.edu.cn"))
+Description: 
+    The R package CTSV implements the CTSV approach developed by Jinge Yu 
+    and Xiangyu Luo that detects cell-type-specific spatially variable genes 
+    accounting for excess zeros. CTSV directly models sparse raw count data 
+    through a zero-inflated negative binomial regression model, incorporates 
+    cell-type proportions, and performs hypothesis testing based on R package 
+    pscl.vThe package outputs p-values and q-values for genes in each cell type, 
+    and CTSV is scalable to datasets with tens of thousands of genes measured on 
+    hundreds of spots. CTSV can be installed in Windows, Linux, and Mac OS.
 License: GPL-3
-RoxygenNote: 7.2.0
 Encoding: UTF-8
+RoxygenNote: 7.2.0
+Depends: 
+    R (>= 4.2),
+URL: https://github.com/jingeyu/CTSV
+BugReports: https://github.com/jingeyu/CTSV/issues
+Imports: 
+    stats, 
+    pscl, 
+    qvalue, 
+    BiocParallel,
+    methods,
+    knitr, 
+    SpatialExperiment,
+    SummarizedExperiment
+Suggests: 
+    testthat,
+    BiocStyle
+biocViews: 
+    GeneExpression, 
+    StatisticalMethod, 
+    Regression, 
+    Spatial,
+    Genetics
 NeedsCompilation: yes
 VignetteBuilder: knitr
