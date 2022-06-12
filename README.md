@@ -46,7 +46,7 @@ print(K)
 # Number of SV genes at the aggregated level:
 print(sum(rowSums(gamma_true)>0))
 #--- Run CTSV ----
-result <- ctsv(spe,W,num_core = 8)
+result <- CTSV(spe,W,num_core = 8)
 # View on q-value matrix
 head(result$qval)
 # detect SV genes
