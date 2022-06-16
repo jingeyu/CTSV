@@ -36,14 +36,14 @@ G <- nrow(spe)
 n <- ncol(spe)
 # cell type number
 K <- ncol(W)
-print(G)
-print(n)
-print(K)
+G
+n
+K
 # SV genes in each cell type:
-print(rownames(W)[which(gamma_true[,1] == 1)])
-print(rownames(W)[which(gamma_true[,2] == 1)])
+rownames(W)[which(gamma_true[,1] == 1)]
+rownames(W)[which(gamma_true[,2] == 1)]
 # Number of SV genes at the aggregated level:
-print(sum(rowSums(gamma_true)>0))
+sum(rowSums(gamma_true)>0)
 #--- Run CTSV ----
 result <- CTSV(spe,W,num_core = 8)
 # View on q-value matrix
@@ -51,5 +51,5 @@ head(result$qval)
 # detect SV genes
 re <- svGene(result$qval,0.05)
 #SV genes in each cell type:
-print(re$SVGene)
+re$SVGene
 }
