@@ -73,7 +73,7 @@ data("CTSVexample_data", package="CTSV")
 spe <- CTSVexample_data[[1]]
 W <- CTSVexample_data[[2]]
 gamma_true <- CTSVexample_data[[3]]
-Y <- spe@assays@data$counts
+Y <- assay(spe)
 # dimension of bulk ST data
 dim(Y)
 # dimension of cell-type proportion matrix:
@@ -95,7 +95,7 @@ We are now ready to run CTSV on the bulk ST data using `ctsv` function.
 * `BPPARAM:` Optional additional argument for parallelization. The default is NULL, in which case `num_core` will be used instead.
 
 ```{r Run CTSV}
-result <- ctsv(spe,W,num_core = 8)
+result <- CTSV(spe,W,num_core = 8)
 ```
 
 ## CTSV results
