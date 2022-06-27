@@ -65,7 +65,7 @@ We are now ready to run CTSV on the bulk ST data using `ctsv` function.
 * `BPPARAM:` Optional additional argument for parallelization. The default is NULL, in which case `num_core` will be used instead.
 
 ```{r Run CTSV}
-result <- ctsv(spe,W,num_core = 8)
+result <- CTSV(spe,W,num_core = 8)
 ```
 
 ## CTSV results
