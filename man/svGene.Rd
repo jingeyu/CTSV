@@ -30,5 +30,5 @@ rownames(Q_val) <- paste0("gene",seq_len(G))
 # detect SV genes
 re <- svGene(Q_val,0.05)
 #SV genes in each cell type:
-print(re$SVGene)
+re$SVGene
 }

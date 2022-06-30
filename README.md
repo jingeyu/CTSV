@@ -4,7 +4,7 @@ The R package CTSV implements the CTSV approach developed by Jinge Yu and Xiangy
 
 ## Prerequisites and Installation
 
-1. R version >= 4.2.0.
+1. R version >= 4.0.0.
 2. CRAN package: stats (>= 4.1.0), doParallel (>= 1.0.16), doSNOW (>= 1.0.19), foreach (>= 1.5.1), pscl (>= 1.5.5)
 
    Bioconductor package: qvalue (>=2.24.0)
@@ -46,7 +46,7 @@ print(K)
 # Number of SV genes at the aggregated level:
 print(sum(rowSums(gamma_true)>0))
 #--- Run CTSV ----
-result <- CTSV(spe,W,num_core = 8)
+result <- ctsv(spe,W,num_core = 8)
 # View on q-value matrix
 head(result$qval)
 # detect SV genes

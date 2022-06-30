@@ -45,14 +45,14 @@
 #' n <- ncol(spe)
 #' # cell type number
 #' K <- ncol(W)
-#' print(G)
-#' print(n)
-#' print(K)
+#' G
+#' n
+#' K
 #' # SV genes in each cell type:
-#' print(rownames(W)[which(gamma_true[,1] == 1)])
-#' print(rownames(W)[which(gamma_true[,2] == 1)])
+#' rownames(W)[which(gamma_true[,1] == 1)]
+#' rownames(W)[which(gamma_true[,2] == 1)]
 #' # Number of SV genes at the aggregated level:
-#' print(sum(rowSums(gamma_true)>0))
+#' sum(rowSums(gamma_true)>0)
 #' #--- Run CTSV ----
 #' result <- CTSV(spe,W,num_core = 8)
 #' # View on q-value matrix
@@ -60,7 +60,7 @@
 #' # detect SV genes
 #' re <- svGene(result$qval,0.05)
 #' #SV genes in each cell type:
-#' print(re$SVGene)
+#' re$SVGene
 #' @export
 CTSV <- function(spe, W, num_core=1, BPPARAM = NULL){
     if (missing(spe) || !is(spe,"SpatialExperiment") || is.null(rownames(spe)) || is.null(colnames(spe))) {
@@ -68,7 +68,7 @@ CTSV <- function(spe, W, num_core=1, BPPARAM = NULL){
     }
     if (missing(W) || !is.matrix(W)) {
         stop("Include cell-type proportion matrix of the matrix type.")
-    }
+    } 
     if(as.integer(num_core) != as.numeric(num_core)){
         stop("Input integer num of cores.")
     }
@@ -156,7 +156,7 @@ CTSV <- function(spe, W, num_core=1, BPPARAM = NULL){
 #' # detect SV genes
 #' re <- svGene(Q_val,0.05)
 #' #SV genes in each cell type:
-#' print(re$SVGene)
+#' re$SVGene
 #' @export
 svGene <- function(Q_val, thre.alpha=0.05){
     if (missing(Q_val)) {
